@@ -77,7 +77,7 @@ const iscollapsed = computed(() => useAdminStore().iscollapsed)
         }
         .sub-title{
             font-size: 14px;
-            color: #666;
+            color: #3c0909;
         }
     }
 }
