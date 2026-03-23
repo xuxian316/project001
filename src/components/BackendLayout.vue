@@ -35,11 +35,11 @@ import Navbar from "./Navbar.vue";
   }
   .main-container {
     height: 100%;
-    background-color: cadetblue;
+    background-color: rgb(241, 243, 236);
   }
     .content-container {
       padding: 20px;
-      background-color: #9b2f2f;
+      background-color: #f9f7f7;
       min-height: calc(100% - 74px);
       
     }
