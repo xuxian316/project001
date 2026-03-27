@@ -18,7 +18,7 @@
 
 
 <script setup>
-const logoUrl =  new URL('@/assets/images/robot-fill.png', import.meta.url)
+import logoUrl from '@/assets/images/robot-fill.png'
 </script>
 <style lang="scss" scoped>
 .auth-layout {
