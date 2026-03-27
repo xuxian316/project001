@@ -62,7 +62,7 @@ const submitForm = async (formEl) =>{      //`=>` 左边是**输入**，右边 `
     await formEl.validate((valid, fields)=>{    //   拿出我存着的 formData     拿出我存着的 rules （将这两个过程封装成了validate函数）  得出结果，告诉你 valid 和 fields  
         if(valid){
             login(formData).then(data=>{
-                if(!data.taken){
+                if(!data.token){
                     // 处理登录成功后的逻辑
                     return console.error("登陆失败");
                  localStorage.setItem("token", data.token);
