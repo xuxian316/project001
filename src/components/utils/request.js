@@ -25,10 +25,10 @@ service.interceptors.request.use(
 service.interceptors.response.use(
     response => {
         const{data,config}=response
-        if(data.code===200){
+        if(data.code==="200"){
             return data.data; // 直接返回响应数据中的 data 字段
         }else{
-            if(data.code===-1){
+            if(data.code==="-1"){
                 if(config.url!='/api/auth/login'){
                     ElMessage.error('登录状态已过期，请重新登录');
                     localStorage.removeItem('token');

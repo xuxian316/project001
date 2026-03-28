@@ -41,7 +41,9 @@
 <script setup >
 import { ref, reactive } from 'vue'
 import { login } from '@/api/admin'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const ruleFormRef = ref()      //通过REf获取到表单内部方法，validate reset等方法是表单内部方法，通过ref获取到表单实例后就可以调用这些方法了
 
 const formData = reactive({
@@ -65,12 +67,22 @@ const submitForm = async (formEl) =>{      //`=>` 左边是**输入**，右边 `
                 if(!data.token){
                     // 处理登录成功后的逻辑
                     return console.error("登陆失败");
-                 localStorage.setItem("token", data.token);
-                 localStorage   
                 }
+                 localStorage.setItem("token", data.token);
+                 localStorage.setItem("userInfo", JSON.stringify(data.userInfo)) 
+                
+           
+                if(data.userInfo.userType===2){
+                    router.push("/back/dashboard")
+                }else{
+                    
+                }
+            
             })
-    }    })
+        }
+    })
 }
+
 </script>
 
 
