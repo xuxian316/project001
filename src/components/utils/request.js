@@ -42,7 +42,7 @@ service.interceptors.response.use(
         
     }
     return response;
- },
+},
     
     (error) => {
         

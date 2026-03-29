@@ -68,8 +68,8 @@ const submitForm = async (formEl) =>{      //`=>` 左边是**输入**，右边 `
                     // 处理登录成功后的逻辑
                     return console.error("登陆失败");
                 }
-                 localStorage.setItem("token", data.token);
-                 localStorage.setItem("userInfo", JSON.stringify(data.userInfo)) 
+                localStorage.setItem("token", data.token);
+                localStorage.setItem("userInfo", JSON.stringify(data.userInfo)) 
                 
            
                 if(data.userInfo.userType===2){
