@@ -37,6 +37,12 @@
                 </template>
             </el-table-column>
         </el-table>
+        <el-pagination 
+            layout="prev, pager, next" 
+            :total="pagination.total" 
+            :page-size="pagination.size" 
+            v-model:current-page="pagination.currentPage"  @current-change="handleChange"                 >
+        </el-pagination>
 
 
 
@@ -91,8 +97,13 @@ const handleSearch =async (formData={}) => {
     const {records,total}= await articlePage(params)
     
     tableData.value=records
+    pagination.total=total
 }
-
+const handleChange = (page) => {
+    pagination.currentPage=page
+    handleSearch()
+    
+}
 
 const categoryMap=reactive({})//创建一个响应式对象来存储分类数据
 const categories=ref([])//创建一个ref来存储分类数据，ref是一个对象，value属性存储实际的值
