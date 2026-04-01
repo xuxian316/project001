@@ -2,7 +2,7 @@
     <div>
         <pagehead title="知识文章" class="head">
             <template #buttons>
-                <el-button type="primary">新增</el-button>
+                <el-button type="primary" @click="dialogVisible=true">新增</el-button>
             </template>
             
         </pagehead>
@@ -43,6 +43,7 @@
             :page-size="pagination.size" 
             v-model:current-page="pagination.currentPage"  @current-change="handleChange"                 >
         </el-pagination>
+        <ArticleDialog v-model:modelValue="dialogVisible"  :categories="categories"></ArticleDialog>
 
 
 
@@ -59,6 +60,7 @@ import { categoryTree } from "@/api/admin";
 import { articlePage } from '../api/admin';
 import { Timer } from '@element-plus/icons-vue';
 import { SCOPE } from 'element-plus';
+import ArticleDialog from '@/components/ArticleDialog.vue'
 
 const formItem = ref([
     { comp: "input", prop: 'title', label: '文章标题', placeholder: '请输入文章标题' },
@@ -109,6 +111,8 @@ const categoryMap=reactive({})//创建一个响应式对象来存储分类数据
 const categories=ref([])//创建一个ref来存储分类数据，ref是一个对象，value属性存储实际的值
 
 
+//新增和编辑
+ const dialogVisible=ref(false)
 
 //列表数据
 const tableData=ref([])
