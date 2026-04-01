@@ -7,6 +7,36 @@
             
         </pagehead>
         <TableSearch :formItem="formItem" @search="handleSearch"/>
+        <el-table :data="tableData" class="table" >
+            <el-table-column width="250" label="文章标题" fixed="left" >
+                <template #default="scope">
+                    <div style="display: flex;align-items: center;">
+                        <el-icon><Timer /></el-icon>
+                        <span>{{ scope.row.title }} </span>
+                    </div>
+                </template>
+            </el-table-column>
+            <el-table-column  label="分类" width="180" >
+                <template #default="scope">
+                    <div style="display: flex;align-items: center;">
+                        <el-icon><Timer /></el-icon>
+                        <span>{{categoryMap[scope.row.categoryId] }} </span>
+                    </div>
+                </template>
+            </el-table-column>
+            <el-table-column prop="authorName" label="作者" width="150" ></el-table-column>
+            <el-table-column prop="readCount" label="阅读量" width="150" ></el-table-column>
+            <el-table-column prop="updatedAt" label="发布时间" width="150" ></el-table-column>
+            
+            <el-table-column  label="操作" fixed="right"width="240">
+                <template #default="scope">
+                    <el-button text type="primary">编辑</el-button>
+                    <el-button v-if="scope.row.status === 0||scope.row.status === 2" text type="success">发布</el-button>
+                    <el-button v-if	="scope.row.status === 1" text type="warning">下线</el-button>
+                    <el-button text type="danger">删除</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
 
 
 
@@ -21,6 +51,8 @@ import pagehead from "@/components/pagehead.vue"
 import TableSearch from "../components/TableSearch.vue";
 import { categoryTree } from "@/api/admin";
 import { articlePage } from '../api/admin';
+import { Timer } from '@element-plus/icons-vue';
+import { SCOPE } from 'element-plus';
 
 const formItem = ref([
     { comp: "input", prop: 'title', label: '文章标题', placeholder: '请输入文章标题' },
@@ -47,7 +79,7 @@ const pagination=reactive({
     size:10,
     total:0
 })
-const handleSearch =async (formData) => {
+const handleSearch =async (formData={}) => {
     console.log(formData,"查询参数")
 
     const params = {
@@ -56,14 +88,19 @@ const handleSearch =async (formData) => {
     }
 
 
-    const data = await articlePage(params)
-    console.log(data,"文章列表")
+    const {records,total}= await articlePage(params)
+    
+    tableData.value=records
 }
 
 
 const categoryMap=reactive({})//创建一个响应式对象来存储分类数据
 const categories=ref([])//创建一个ref来存储分类数据，ref是一个对象，value属性存储实际的值
 
+
+
+//列表数据
+const tableData=ref([])
 onMounted(async()=>{
     const data =await categoryTree()
     categories.value=data.map(item=>{
@@ -88,4 +125,5 @@ onMounted(async()=>{
 .head{
     margin-bottom: 20px;
 }
+
 </style>
