@@ -18,7 +18,7 @@
                 <el-input type="textarea" v-model="formData.summary" placeholder="请输入文章摘要(可选)" maxlength="200" show-word-limit :rows="4" ></el-input>
             </el-form-item>
             <el-form-item label="文章标签" prop="tags">
-                <el-select type="textarea" v-model="formData.tags" placeholder="请输入文章标签(可选)" multiple filterable allow-create style="width: 100%">
+                <el-select type="textarea" v-model="formData.tagsArray" placeholder="请输入文章标签(可选)" multiple filterable allow-create style="width: 100%">
                     <el-option v-for="tag in commonTags" :key="tag" :label="tag" :value="tag"></el-option>
                 </el-select>
                 
@@ -27,6 +27,7 @@
                 <div class="coverUpload">
                     <el-upload
                         class="avatar-uploader"
+
                         action="#"
                         :show-file-list="false" 
                         :before-upload="beforeUpload"
@@ -37,7 +38,7 @@
                         <div  class="cover-palceholder" v-if="!imgurl">
                             <p>点击上传封面</p>
                         </div>
-                        <img v-else :src="imgurl" class="coverimage">
+                        <img v-else :src="imgurl" class="coverImage">
                     </el-upload>
                     <div v-if="imgUrl" class="cover-remove">
                         <el-button type="danger" size="small" @click="handleRemove">移除封面</el-button>
@@ -55,14 +56,23 @@
                 ></rich-text-editor>    
             </el-form-item>
         </el-form>
+        <div v-if="btnpreview">
+            <h3>内容预览</h3>
+            <div v-html="formData.content"></div>
+        </div>
+        <template #footer >
+            <el-button   @click="btnpreview = !btnpreview">{{ btnpreview ? '取消预览' : '预览效果' }}</el-button>
+            <el-button   @click="handleClose">取消</el-button>
+            <el-button   @click="handleSubmit" :loading="loading">创建文章</el-button>
+        </template>
     </el-dialog>
 </template>
 
 <script setup>
 import { ElMessage } from 'element-plus'
 import { el } from 'element-plus/es/locale/index.mjs'
-import{ref,reactive,computed} from 'vue'
-import { uploadFile } from '../api/admin'
+import{ref,reactive,computed,nextTick} from 'vue'
+import { uploadFile , createArticle} from '../api/admin'
 import { fileBaseUrl } from '../config'
 import RichTextEditor from './RichTextEditor.vue'
 const imgUrl = ref('')
@@ -77,7 +87,7 @@ const props=defineProps({
     }
 })
 
-const emit=defineEmits(['update:modelValue'])
+const emit=defineEmits(['update:modelValue',"success"])
 
 const dialogVisible=computed({
     get(){
@@ -116,6 +126,10 @@ const rules=reactive({
     summary: [
         { required: false, message: '请输入文章摘要', trigger: 'blur' },
         { min: 2, max: 200, message: '长度在 2 到 200 个字符', trigger: 'blur' }
+    ],
+    content: [
+        { required: true, message: '请输入文章内容', trigger: 'blur' },
+        { min: 2, max: 5000, message: '长度在 2 到 5000 个字符', trigger: 'blur' }
     ]
 })
 
@@ -154,7 +168,7 @@ const handUploadRequest = async({file}) =>
     })
     //拼接完整的图片路径
     imgurl.value=fileBaseUrl+fileRes.filePath
-    formData.coverImage=fileRes.filepath
+    formData.coverImage=fileRes.filePath
 
 }
 //清除封面函数
@@ -162,10 +176,46 @@ const handleRemove=()=>{
     imgurl.value=""
     formData.coverImage=""
 }
-const handleContentChange=()=>{
-    
+const handleContentChange=(data)=>{
+    console.log(data);
+    formData.content=data.html
 }
-const handleEditorCreated=()=>{
+const editorInstance=ref(null)
+const handleEditorCreated=(editor)=>{
+    editorInstance.value=editor
+    //编辑情况
+    if (formData.content  && editor) {
+        editorInstance.value=editor  //take the control right to the editorinstance     put the editor in the editorinstance,then you can control editor by editorinstance
+        // to guarantee that the DOM is rendered,in the case of lazy loading
+        nextTick(() => {
+            editor.setHtml(formData.content)
+            
+        })
+    }
+}
+const btnpreview=ref(false)
+
+
+//提交表单
+const formRef=ref()
+const loading=ref(false)
+const handleSubmit=()=>{
+    formRef.value.validate((valid,fields)=>{
+        if (valid) {
+            loading.value=true
+        }
+        console.log(formData);
+        const submitData={
+            ...formData,
+            tags:formData.tagsArray.join(',')
+        }
+        delete submitData.tagsArray
+        createArticle(submitData).then(res=>{
+            console.log(res);
+            loading.value=false
+            emit("success")
+        })
+    })
     
 }
 </script>
@@ -184,7 +234,7 @@ const handleEditorCreated=()=>{
     align-items: center;
     background: #f6f8fa;
 }
-.coverimage{
+.coverImage{
     width: 150px;
     height: 100px;
     display: block;

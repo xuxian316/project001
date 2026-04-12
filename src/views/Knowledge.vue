@@ -43,7 +43,7 @@
             :page-size="pagination.size" 
             v-model:current-page="pagination.currentPage"  @current-change="handleChange"                 >
         </el-pagination>
-        <ArticleDialog v-model:modelValue="dialogVisible"  :categories="categories"></ArticleDialog>
+        <ArticleDialog v-model:modelValue="dialogVisible"  :categories="categories" @success="handleSuccess"></ArticleDialog>
 
 
 
@@ -132,6 +132,11 @@ onMounted(async()=>{
     handleSearch()
     
 })
+
+
+//新增成功
+const handleSuccess=()=>{
+}
 
 </script>
 
